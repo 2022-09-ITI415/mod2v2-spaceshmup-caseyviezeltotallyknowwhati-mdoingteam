@@ -13,6 +13,9 @@ public class Hero : MonoBehaviour {
     public float gameRestartDelay = 2f;
     public GameObject projectilePrefab;
     public float projectileSpeed = 40;
+    public float maxDistanceDodging = 10f;
+
+    public bool isDodging = false;
     public Weapon[] weapons;
 
     [Header("Set Dynamically")]
@@ -51,14 +54,23 @@ public class Hero : MonoBehaviour {
         float xAxis = Input.GetAxis("Horizontal");
         float yAxis = Input.GetAxis("Vertical");
 
-        // Change transform.position based on the axes
-        Vector3 pos = transform.position;
-        pos.x += xAxis * speed * Time.deltaTime;
-        pos.y += yAxis * speed * Time.deltaTime;
-        transform.position = pos;
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            isDodging = true;
+            Dodge();
+        }
 
+        // Change transform.position based on the axes
+        if (!isDodging)
+        {
+            Vector3 pos = transform.position;
+            pos.x += xAxis * speed * Time.deltaTime;
+            pos.y += yAxis * speed * Time.deltaTime;
+            transform.position = pos;
+        }
         // Rotate the ship to make it feel more dynamic
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
+
 
         // Use the fireDelegate to fire Weapons
         // First, make sure the button is pressed: Axis("Jump")
@@ -67,6 +79,8 @@ public class Hero : MonoBehaviour {
         {
             fireDelegate();
         }
+
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -165,5 +179,16 @@ public class Hero : MonoBehaviour {
         {
             w.SetType(WeaponType.none);
         }
+    }
+
+    void Dodge()
+    {
+        Vector3 destination = transform.position;
+
+        destination.y += Input.GetAxisRaw("Vertical") * maxDistanceDodging;
+        destination.x += Input.GetAxisRaw("Horizontal") * maxDistanceDodging;
+
+        transform.position = destination;
+        isDodging = false;
     }
 }
