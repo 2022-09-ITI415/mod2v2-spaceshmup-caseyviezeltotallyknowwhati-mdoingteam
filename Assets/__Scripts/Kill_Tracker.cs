@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Kill_Tracker : MonoBehaviour
 {
-    public int startLevelKillCount = 1;
+    public int startLevelKillCount = 5;
     public int KillCount;
     public Text Destroyed;
     public Text levelText;
